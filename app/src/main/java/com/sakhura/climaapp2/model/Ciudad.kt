@@ -1,9 +1,11 @@
 package com.sakhura.climaapp2.model
 
-@Entity
+import androidx.room.Entity
+
+@Entity(tableName = "ciudades")
 data class Ciudad (
     @PrimaryKey val nombre: String
-    //val latitud: Double,
-    //val longitud: Double
-
+    val latitud: Double = 0.0,
+    val longitud: Double = 0.0,
+    val ultimaConsulta: Long = System.currentTimeMillis()
 )
