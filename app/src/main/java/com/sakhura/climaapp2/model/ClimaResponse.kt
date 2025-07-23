@@ -1,5 +1,7 @@
 package com.sakhura.climaapp2.model
 
+import com.google.gson.annotations.SerializedName
+
 data class ClimaResponse(
     @SerializedName("name") val nombre: String,
     val weather: List<Weather>,

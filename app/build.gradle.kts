@@ -1,12 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("kotlin-kapt")
+   // id("kotlin-kapt")
 }
 
 android {
     namespace = "com.sakhura.climaapp2"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.sakhura.climaapp2"
@@ -66,9 +66,9 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
     // Room Database
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+   // implementation("androidx.room:room-runtime:2.6.1")
+    //implementation("androidx.room:room-ktx:2.6.1")
+    //kapt("androidx.room:room-compiler:2.6.1")
 
     // Testing
     testImplementation(libs.junit)

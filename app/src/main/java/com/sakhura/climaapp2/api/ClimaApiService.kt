@@ -1,6 +1,5 @@
 package com.sakhura.climaapp2.api
 
-import androidx.tracing.perfetto.handshake.protocol.Response
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
