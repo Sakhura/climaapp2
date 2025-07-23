@@ -46,6 +46,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.recyclerview:recyclerview:1.3.1")
     implementation("androidx.room:room-runtime:2.6.1")
+    implementation(libs.androidx.tracing.perfetto.handshake)
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 }

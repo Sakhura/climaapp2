@@ -1,17 +1,17 @@
 package com.sakhura.climaapp2.model
 
 data class ClimaResponse(
-        val nombre: String,
-        val main: String,
-        val weather: List<Weather>,
+    @SerializedName("name") val nombre: String,
+    val weather: List<Weather>,
+    val main: Main
 )
 
 data class  Main(
     val temp: Double,
     val pressure: Int,
     val humidity: Int,
-    val temp_min: Double,
-    val temp_max: Double
+    @SerializedName("temp_min") val tempMin: Double,
+    @SerializedName("temp_max") val temp_max: Double
 
 )
 

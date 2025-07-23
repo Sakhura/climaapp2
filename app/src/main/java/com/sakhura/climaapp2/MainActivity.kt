@@ -1,5 +1,6 @@
 package com.sakhura.climaapp2
 
+import android.R
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Bundle
@@ -22,13 +23,20 @@ import java.util.jar.Manifest
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val ClimaRepository = ClimaRepository()
+    private val PERMISSIONS_REQUEST_LOCATION = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById<R.id.layoutMain>) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         binding.btnBuscar.setOnClickListener {
             val ciudad = binding.etCiudad.text.toString()
@@ -83,21 +91,27 @@ class MainActivity : AppCompatActivity() {
 
              }
 
-            private fun obtenerUbicacion() {
-                LocationHelper.obtenerUbicacion(this) { location ->
-                    if (location != null) {
-                       val geocoder = Geocoder(this, Locale.getDefault())
-                        val direccion= geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                        val ciudad = direccion?.firstOrNull()?.locality ?: "Ciudad"
-                        if (!ciudad.isNullOrBlank()) {
-                            obtenerClima(ciudad)
-                            binding.tvCiudad.setText(Ciudad)
-                        }
-                    } else {
-                        Toast.makeText(this, "No se pudo obtener la ubicación", Toast.LENGTH_SHORT).show()
+    private fun obtenerUbicacion() {
+        LocationHelper.obtenerUbicacion(this) { location ->
+            if(location != null){
+                val geocoder = Geocoder(this, locale.getDefault())
+                try{
+                    val direcciones = geocoder.getFromLocation(location.latitude, location.longitude,1)
+                    val ciudad = direcciones?.FirstOrNull()?.locally ?: "Ciudad no encontrada"
+                    if(ciudad != "Ciudad no encontrada") {
+                        obtenerClima(cuidad)
+                        binding.etCiudad.setText(cuidad)
                     }
+
+                }catch (e: Exception){
+                    Toast.makeText(this, "Error en el nombre de la ciudad", Toast.LENGTH_SHORT).show()
+
                 }
+            }else{
+                Toast.makeText(this,"No se pudo obtener ubicacion", Toast.LENGTH_SHORT).show()
 
             }
+        }
+    }
 
     }
