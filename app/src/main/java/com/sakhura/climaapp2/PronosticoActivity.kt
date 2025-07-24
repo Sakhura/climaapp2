@@ -1,10 +1,12 @@
 package com.sakhura.climaapp2
 
+import android.util.Log.e
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sakhura.climaapp2.adapter.PronosticoAdapter
+import com.sakhura.climaapp2.model.DiaPronostico
 import com.sakhura.climaapp2.repository.ClimaRepository
 
 class PronosticoActivity : AppCompatActivity(){
@@ -54,19 +56,51 @@ class PronosticoActivity : AppCompatActivity(){
         }
             CoroutineScope(Dispatchers.Main).launch {
                 try {
-                    tvTituloPronostico.text = "Pronóstico para los proximos 5 días en $ciudadNombre"
+                }
+                // loading
+                tvTituloPronostico.text = "Pronóstico para los proximos 5 días en $ciudadNombre"
                     val pronosticoResponse = climaRepository.obtenerPronostico(ciudadNombre)
+                    //filtro 1
                     val pronosticosFiltrados = filtrarPronosticosPordia(pronosticoResponse.list)
+                    //adapter
                     val adapter = PronosticoAdapter(pronosticos)
                     rvPronostico.adapter = adapter
-    /*
-    * filtar pronosticos
-    * val adapter
-    * fun filtrarPronosticosPordia
-    * */
+                    //actualiza loading
+                    tvTituloPronostico.text = "Pronóstico de ${pronosticosFiltrados.size} para $ciudadNombre"
+
+                Toast.makeText(this@PronosticoActivity, "Pronostico cargado", Toast.LENGTH_SHORT).show())
+            }   catch (e: Exception) {
+                tvTituloPronostico.text = "Pronostico Cargado Exitosamente", Toast.LENGTH_SHORT).show()
+
                 }
             }
 
     }
 
+    private fun filtrarPronosticosPordia(pronosticos: List<DiaPronostico>): List<DiaPronostico> {
+        val pronosticosFiltrados = mutableMapOf<String, DiaPronostico>()
+
+        for (pronostico in lista) {
+            val fecha = pronostico.dt_txt.substring(0, 10) // Obtener la fecha (sin la hora)
+            val hora = pronostico.dt_txt.substring(11, 16) // Obtener la hora
+
+            if (!pronosticosFiltrados.containsKey(fecha)) ||
+                    kotlin.math.abs(hora - 12) < kotlin.math.abs(
+                filtrarPronosticosPordia[fecha]!!.dt_txt.substring(
+                    11,
+                    16
+                ).toInt() - 12
+            ) {
+                filtrarPronosticosPordia()
+            }
+
+        } return pronosticosFiltrados.values.toList()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
 }
+
