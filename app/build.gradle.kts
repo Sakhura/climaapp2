@@ -64,6 +64,8 @@ dependencies {
 
     // RecyclerView
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation(libs.androidx.room.common.jvm)
+    implementation(libs.androidx.room.runtime.android)
 
     // Room Database
    // implementation("androidx.room:room-runtime:2.6.1")
