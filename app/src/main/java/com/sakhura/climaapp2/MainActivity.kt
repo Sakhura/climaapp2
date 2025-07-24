@@ -1,6 +1,7 @@
 package com.sakhura.climaapp2
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val climaRepository = ClimaRepository()
     private val PERMISSIONS_REQUEST_LOCATION = 100
+    private var ultimaCiudadConsultada =""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +67,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun abrirPronostico(ciudad: String) {
+        val intent = Intent(this, PronosticoActivity::class.java)
+        intent.putExtra("CIUDAD_NOMBRE", ciudad)
+        startActivity(intent)
+    }
+
     private fun solicitarPermisosUbicacion() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
@@ -75,33 +84,45 @@ class MainActivity : AppCompatActivity() {
             obtenerUbicacion()
         }
     }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_REQUEST_LOCATION && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             obtenerUbicacion()
         } else {
-            Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Permiso de ubicacion requerido para obtener clima actual", Toast.LENGTH_SHORT).show()
         }
-    }
 
-    private fun obtenerUbicacion() {
-        LocationHelper.obtenerUbicacion(this) { location ->
-            if (location != null) {
-                val geocoder = Geocoder(this, Locale.getDefault())
-                try {
-                    val direcciones = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                    val ciudad = direcciones?.firstOrNull()?.locality ?: "Ciudad no encontrada"
-                    if (ciudad != "Ciudad no encontrada") {
-                        obtenerClima(ciudad)
-                        binding.etCiudad.setText(ciudad)
+        private fun obtenerUbicacion() {
+            LocationHelper.obtenerUbicacion(this) { location ->
+                if (location != null) {
+                    val geocoder = Geocoder(this, Locale.getDefault())
+                    try {
+                        val direcciones = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                        val ciudad = direcciones?.firstOrNull()?.locality ?: "Ciudad no encontrada"
+                        if (ciudad != "Ciudad no encontrada") {
+                            obtenerClima(ciudad)
+                            binding.etCiudad.setText(ciudad)
+                        } else {
+                            binding.tvCiudad.text = "❌ Ciudad no encontrada"
+                            binding.tvTemperatura = " --°C"
+                            binding.tvDescripcion.text = "Busca una ciudad para ver el clima"
+                            Toast.makeText(this, "Error al obtener nombre de la ciudad", Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: Exception) {
+                        binding.tvCiudad.text = "❌ Error de geolocalizacion"
+                        binding.tvTemperatura = " --°C"
+                        binding.tvDescripcion.text = "Error al obtener la ciudad donde te encuentras"
+
                     }
-                } catch (e: Exception) {
-                    Toast.makeText(this, "Error al obtener nombre de la ciudad", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Error al obtener nombre de la ciudad", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    binding.tvCiudad.text = " Sin Ubicacion"
+                    binding.tvTemperatura = " --°C"
+                    binding.tvDescripcion.text = "No se puede obtener ubicación"
+                    Toast.makeText(this, "No se pudo obtener ubicación", Toast.LENGTH_SHORT).show()
+
                 }
-            } else {
-                Toast.makeText(this, "No se pudo obtener ubicación", Toast.LENGTH_SHORT).show()
             }
         }
-    }
 }
