@@ -111,6 +111,15 @@
             android:gravity="center"
             android:textStyle="italic" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="👆 Toca Aqui para ver el pronostico de 5 dias"
+                android:textSize="18sp"
+                android:textColor="#7F8C8D"
+                android:gravity="center"
+                android:textStyle="italic"/>
+
     </LinearLayout>
 
     <!-- Espacio flexible -->
