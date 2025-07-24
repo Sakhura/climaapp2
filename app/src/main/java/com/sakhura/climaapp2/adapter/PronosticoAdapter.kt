@@ -1,5 +1,6 @@
 package com.sakhura.climaapp2.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,10 @@ import java.util.Locale
 class PronosticoAdapter(private val pronosticos: List<DiaPronostico>) :
     RecyclerView.Adapter<PronosticoAdapter.PronosticoViewHolder>() {
 
+    init {
+        Log.d("PronosticoAdapter", "Adapter creado con ${pronosticos.size} pronósticos")
+    }
+
     class PronosticoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivIcono: ImageView = itemView.findViewById(R.id.ivIconoClima)
         val tvFecha: TextView = itemView.findViewById(R.id.tvFecha)
@@ -22,29 +27,45 @@ class PronosticoAdapter(private val pronosticos: List<DiaPronostico>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PronosticoViewHolder {
+        Log.d("PronosticoAdapter", "onCreateViewHolder llamado")
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_dia_pronostico, parent, false)
         return PronosticoViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: PronosticoViewHolder, position: Int) {
         val pronostico = pronosticos[position]
+        Log.d("PronosticoAdapter", "Binding posición $position: ${pronostico.dt_txt}")
 
-        // Fecha
-        val fechaFormateada = formatearFecha(pronostico.dt_txt)
-        holder.tvFecha.text = fechaFormateada
+        try {
+            // Fecha
+            val fechaFormateada = formatearFecha(pronostico.dt_txt)
+            holder.tvFecha.text = fechaFormateada
 
-        // Descripción clima
-        holder.tvDescripcion.text = pronostico.weather[0].description.replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+            // Descripción clima
+            val descripcion = if (pronostico.weather.isNotEmpty()) {
+                pronostico.weather[0].description.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                }
+            } else {
+                "Sin descripción"
+            }
+            holder.tvDescripcion.text = descripcion
+
+            // Temperatura
+            holder.tvTemperatura.text = "${pronostico.main.temp.toInt()}°C"
+
+            // Emoji del clima
+            val main = if (pronostico.weather.isNotEmpty()) pronostico.weather[0].main else "Clear"
+            val emoji = obtenerEmojiClima(main)
+            holder.ivIcono.contentDescription = emoji
+
+            Log.d("PronosticoAdapter", "Item $position configurado correctamente")
+        } catch (e: Exception) {
+            Log.e("PronosticoAdapter", "Error en onBindViewHolder posición $position: ${e.message}")
+            holder.tvFecha.text = "Error"
+            holder.tvDescripcion.text = "Error al cargar datos"
+            holder.tvTemperatura.text = "--°C"
         }
-
-        // Temperatura
-        holder.tvTemperatura.text = "${pronostico.main.temp.toInt()}°C"
-
-        // Emoji del clima
-        val emoji = obtenerEmojiClima(pronostico.weather[0].main)
-        holder.ivIcono.contentDescription = emoji
-
     }
 
     override fun getItemCount(): Int = pronosticos.size

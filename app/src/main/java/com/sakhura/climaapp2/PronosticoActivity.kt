@@ -1,6 +1,7 @@
 package com.sakhura.climaapp2
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -70,15 +71,25 @@ class PronosticoActivity : AppCompatActivity() {
             try {
                 // loading
                 tvTituloPronostico.text = "Cargando pronóstico para $ciudadNombre..."
+                Log.d("PronosticoActivity", "Obteniendo info de la API")
 
                 val pronosticoResponse = climaRepository.obtenerPronostico(ciudadNombre)
+                Log.d("PronosticoActivity", "datos recibidos: ${pronosticoResponse.list.size}")
 
                 // Filtrar pronósticos por día
                 val pronosticosFiltrados = filtrarPronosticosPorDia(pronosticoResponse.list)
+                Log.d("PronosticoActivity", "datos filtrados: ${pronosticosFiltrados.size} por día")
+
+                if (pronosticosFiltrados.isEmpty()){
+                    Log.w("PronosticoActivity", "No se encontraron pronósticos para el día actual")
+                    tvTituloPronostico.text = "No se encontraron pronósticos para el día actual"
+                    return@launch
+                }
 
                 // Configurar adapter
                 val adapter = PronosticoAdapter(pronosticosFiltrados)
                 rvPronostico.adapter = adapter
+                Log.d("PronosticoActivity", "Adapter configurado")
 
                 // Actualizar título
                 tvTituloPronostico.text = "Pronóstico de ${pronosticosFiltrados.size} días para $ciudadNombre"
