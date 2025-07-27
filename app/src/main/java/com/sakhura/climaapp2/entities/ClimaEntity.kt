@@ -1,6 +1,9 @@
 package com.sakhura.climaapp2.entities
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sakhura.climaapp2.model.Weather
@@ -22,7 +25,7 @@ data class ClimaEntity(
     val fechaActualizacion: Long = System.currentTimeMillis(),
     val weather: List<Weather>
 )
-@Entity(tableName= "pronostico")
+@Entity(tableName= "pronostico", primaryKeys = ["id"])
 @TypeConverters(Converters::class)
 data class PronosticoEntity(
     val id : String,
